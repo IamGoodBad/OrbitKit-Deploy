@@ -1,0 +1,59 @@
+name: 'OrbitKit Deploy'
+description: 'Deploy your OrbitKit app site (privacy policy, support, etc.)'
+branding:
+  icon: 'upload-cloud'
+  color: 'blue'
+
+inputs:
+  api-key:
+    description: 'OrbitKit API key (ok_xxxx). Store as a GitHub secret.'
+    required: true
+  app-id:
+    description: 'OrbitKit app ID'
+    required: true
+  api-endpoint:
+    description: 'OrbitKit API base URL'
+    required: false
+    default: 'https://api.orbitkit.io'
+
+outputs:
+  site-url:
+    description: 'Deployed site URL'
+    value: ${{ steps.deploy.outputs.site-url }}
+  deployed-at:
+    description: 'Deploy timestamp'
+    value: ${{ steps.deploy.outputs.deployed-at }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Deploy to OrbitKit
+      id: deploy
+      shell: bash
+      env:
+        # Pass inputs as env vars to avoid script injection
+        # (per GitHub security best practices)
+        ORBITKIT_API_KEY: ${{ inputs.api-key }}
+        ORBITKIT_APP_ID: ${{ inputs.app-id }}
+        ORBITKIT_ENDPOINT: ${{ inputs.api-endpoint }}
+      run: |
+        RESPONSE=$(curl -s -w "\n%{http_code}" \
+          -X POST "${ORBITKIT_ENDPOINT}/api/apps/${ORBITKIT_APP_ID}/deploy" \
+          -H "Authorization: Bearer ${ORBITKIT_API_KEY}" \
+          -H "Content-Type: application/json")
+        HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+        BODY=$(echo "$RESPONSE" | sed '$d')
+
+        if [ "$HTTP_CODE" != "200" ]; then
+          ERROR_MSG=$(echo "$BODY" | jq -r '.error.message // .message // "Unknown error"' 2>/dev/null || echo "$BODY")
+          echo "::error::Deploy failed (HTTP $HTTP_CODE): $ERROR_MSG"
+          exit 1
+        fi
+
+        SITE_URL=$(echo "$BODY" | jq -r '.url')
+        DEPLOYED_AT=$(echo "$BODY" | jq -r '.deployedAt')
+
+        echo "site-url=$SITE_URL" >> "$GITHUB_OUTPUT"
+        echo "deployed-at=$DEPLOYED_AT" >> "$GITHUB_OUTPUT"
+
+        echo "::notice::Deployed to $SITE_URL"
