@@ -113,4 +113,4 @@ jobs:
 
 ## License
 
-MIT
+Copyright OrbitKit. All rights reserved.
