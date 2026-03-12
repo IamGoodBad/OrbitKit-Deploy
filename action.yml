@@ -1,5 +1,5 @@
 name: 'OrbitKit Deploy'
-description: 'Deploy your OrbitKit app site (privacy policy, support, etc.)'
+description: 'Deploy your OrbitKit app site (privacy policy, support, AASA, and more)'
 branding:
   icon: 'upload-cloud'
   color: 'blue'

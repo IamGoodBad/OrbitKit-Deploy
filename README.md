@@ -1,6 +1,6 @@
 # OrbitKit Deploy
 
-A GitHub Action that deploys your [OrbitKit](https://orbitkit.io) app site — privacy policies, support pages, data deletion pages, TestFlight landing pages, and more — straight from your CI/CD pipeline.
+A GitHub Action that deploys your [OrbitKit](https://orbitkit.io) app site — privacy policies, support pages, data deletion pages, app site association files, and more — straight from your CI/CD pipeline.
 
 ## Usage
 
