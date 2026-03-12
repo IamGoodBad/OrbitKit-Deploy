@@ -79,7 +79,7 @@ jobs:
 
 ### Deploy with the OrbitKit CLI
 
-If you need to update policy data before deploying, use the [OrbitKit CLI](https://www.npmjs.com/package/orbitkit) in an earlier step:
+If you need to update policy data before deploying, use the [OrbitKit CLI](https://github.com/IamGoodBad/OrbitKit-CLI) in an earlier step:
 
 ```yaml
 jobs:
